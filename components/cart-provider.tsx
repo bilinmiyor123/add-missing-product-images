@@ -24,35 +24,8 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 
 const STORAGE_KEY = "balikavi-cart"
 
-const initialItems: CartItem[] = [
-  {
-    id: 1,
-    name: "Profesyonel Olta Kamışı Carbon Pro X",
-    price: 2499,
-    quantity: 1,
-    image: "/professional-fishing-rod.jpg",
-    category: "Olta Kamışları",
-  },
-  {
-    id: 2,
-    name: "Makara Seti - Pro Series",
-    price: 1899,
-    quantity: 2,
-    image: "/fishing-reel-set.jpg",
-    category: "Makaralar",
-  },
-  {
-    id: 3,
-    name: "Balık Yemleri Koleksiyonu",
-    price: 349,
-    quantity: 1,
-    image: "/fishing-lures-collection.jpg",
-    category: "Yemler",
-  },
-]
-
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(initialItems)
+  const [items, setItems] = useState<CartItem[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   // Sepeti tarayıcıdan yükle (sayfa yenilemelerinde korunması için)

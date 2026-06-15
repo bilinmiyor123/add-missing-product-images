@@ -11,9 +11,11 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
-import { Search, SlidersHorizontal } from "lucide-react"
+import { Search, SlidersHorizontal, ShoppingCart, Check } from "lucide-react"
+import { useCart } from "@/components/cart-provider"
 
 export default function ProductsPage() {
+  const { items: cartItems, addItem, removeItem } = useCart()
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState("popular")
   const [showFilters, setShowFilters] = useState(true)
@@ -503,9 +505,42 @@ export default function ProductsPage() {
                         <span className="text-sm font-medium">{product.rating}</span>
                       </div>
                       <p className="mb-3 text-xl font-bold text-primary">{product.price.toLocaleString("tr-TR")} ₺</p>
-                      <Button className="w-full bg-transparent" variant="outline">
-                        Detayları Gör
-                      </Button>
+                      {(() => {
+                        const inCart = cartItems.some((item) => item.id === product.id)
+                        return (
+                          <Button
+                            className="w-full gap-2"
+                            variant={inCart ? "secondary" : "default"}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              if (inCart) {
+                                removeItem(product.id)
+                              } else {
+                                addItem({
+                                  id: product.id,
+                                  name: product.name,
+                                  price: product.price,
+                                  image: product.image,
+                                  category: product.category,
+                                })
+                              }
+                            }}
+                          >
+                            {inCart ? (
+                              <>
+                                <Check className="h-4 w-4" />
+                                Sepetten Çıkar
+                              </>
+                            ) : (
+                              <>
+                                <ShoppingCart className="h-4 w-4" />
+                                Sepete Ekle
+                              </>
+                            )}
+                          </Button>
+                        )
+                      })()}
                     </CardContent>
                   </Card>
                   </Link>

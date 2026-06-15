@@ -80,7 +80,7 @@ export default function HesapPage() {
     {
       id: 1,
       title: "Ev Adresi",
-      name: "Ahmet Yılmaz",
+      name: "Meriç Atacan",
       address: "Atatürk Cad. No: 123/5 Kadıköy",
       city: "İstanbul",
       phone: "+90 555 123 4567",
@@ -89,7 +89,7 @@ export default function HesapPage() {
     {
       id: 2,
       title: "İş Adresi",
-      name: "Ahmet Yılmaz",
+      name: "Meriç Atacan",
       address: "Cumhuriyet Mah. İş Merkezi Kat: 3",
       city: "İstanbul",
       phone: "+90 555 123 4567",
@@ -107,13 +107,13 @@ export default function HesapPage() {
             <div className="flex flex-col items-center gap-6 md:flex-row md:gap-8">
               <Avatar className="h-24 w-24 border-4 border-background shadow-lg">
                 <AvatarImage src="/placeholder.svg?height=96&width=96" />
-                <AvatarFallback className="text-2xl font-bold">AY</AvatarFallback>
+                <AvatarFallback className="text-2xl font-bold">MA</AvatarFallback>
               </Avatar>
               <div className="flex-1 text-center md:text-left">
                 <h1 className="text-balance text-3xl font-bold tracking-tight md:text-4xl">
-                  Hoş Geldiniz, Ahmet Yılmaz
+                  Hoş Geldiniz, Meriç Atacan
                 </h1>
-                <p className="mt-2 text-lg text-muted-foreground">ahmet.yilmaz@example.com</p>
+                <p className="mt-2 text-lg text-muted-foreground">meric.atacan@example.com</p>
                 <div className="mt-4 flex flex-wrap items-center justify-center gap-4 md:justify-start">
                   <Badge variant="secondary" className="px-3 py-1">
                     <Package className="mr-1 h-3 w-3" />
@@ -309,16 +309,16 @@ export default function HesapPage() {
                     <div className="grid gap-6 md:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="firstName">Ad</Label>
-                        <Input id="firstName" defaultValue="Ahmet" />
+                        <Input id="firstName" defaultValue="Meriç" />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="lastName">Soyad</Label>
-                        <Input id="lastName" defaultValue="Yılmaz" />
+                        <Input id="lastName" defaultValue="Atacan" />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">E-posta</Label>
-                      <Input id="email" type="email" defaultValue="ahmet.yilmaz@example.com" />
+                      <Input id="email" type="email" defaultValue="meric.atacan@example.com" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">Telefon</Label>
@@ -370,7 +370,7 @@ export default function HesapPage() {
                       <div className="mt-4 flex justify-between">
                         <div>
                           <p className="text-sm opacity-80">Kart Sahibi</p>
-                          <p className="font-semibold">AHMET YILMAZ</p>
+                          <p className="font-semibold">MERİÇ ATACAN</p>
                         </div>
                         <div className="text-right">
                           <p className="text-sm opacity-80">Son Kullanma</p>

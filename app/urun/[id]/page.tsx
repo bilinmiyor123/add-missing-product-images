@@ -9,9 +9,11 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
-import { Heart, Share2, ShoppingCart, Truck, Shield, RotateCcw, ChevronRight, Star, Minus, Plus } from "lucide-react"
+import { Heart, Share2, ShoppingCart, Truck, Shield, RotateCcw, ChevronRight, Star, Minus, Plus, Check } from "lucide-react"
+import { useCart } from "@/components/cart-provider"
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
+  const { items: cartItems, addItem } = useCart()
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
 
@@ -269,10 +271,41 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               </div>
 
               <div className="flex gap-2">
-                <Button size="lg" className="flex-1 gap-2">
-                  <ShoppingCart className="h-5 w-5" />
-                  Sepete Ekle
-                </Button>
+                {(() => {
+                  const productId = Number(params.id)
+                  const inCart = cartItems.some((item) => item.id === productId)
+                  return (
+                    <Button
+                      size="lg"
+                      className="flex-1 gap-2"
+                      variant={inCart ? "secondary" : "default"}
+                      onClick={() =>
+                        addItem(
+                          {
+                            id: productId,
+                            name: product.name,
+                            price: product.price,
+                            image: product.images[0],
+                            category: product.category,
+                          },
+                          quantity,
+                        )
+                      }
+                    >
+                      {inCart ? (
+                        <>
+                          <Check className="h-5 w-5" />
+                          Sepete Eklendi
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="h-5 w-5" />
+                          Sepete Ekle
+                        </>
+                      )}
+                    </Button>
+                  )
+                })()}
                 <Button variant="outline" size="lg">
                   <Heart className="h-5 w-5" />
                 </Button>

@@ -9,47 +9,13 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag, Truck } from "lucide-react"
+import { useCart } from "@/components/cart-provider"
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Profesyonel Olta Kamışı Carbon Pro X",
-      price: 2499,
-      quantity: 1,
-      image: "/professional-fishing-rod.jpg",
-      category: "Olta Kamışları",
-    },
-    {
-      id: 2,
-      name: "Makara Seti - Pro Series",
-      price: 1899,
-      quantity: 2,
-      image: "/fishing-reel-set.jpg",
-      category: "Makaralar",
-    },
-    {
-      id: 3,
-      name: "Balık Yemleri Koleksiyonu",
-      price: 349,
-      quantity: 1,
-      image: "/fishing-lures-collection.jpg",
-      category: "Yemler",
-    },
-  ])
+  const { items: cartItems, updateQuantity, removeItem } = useCart()
 
   const [couponCode, setCouponCode] = useState("")
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null)
-
-  const updateQuantity = (id: number, delta: number) => {
-    setCartItems((items) =>
-      items.map((item) => (item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item)),
-    )
-  }
-
-  const removeItem = (id: number) => {
-    setCartItems((items) => items.filter((item) => item.id !== id))
-  }
 
   const applyCoupon = () => {
     if (couponCode.toLowerCase() === "indirim10") {
