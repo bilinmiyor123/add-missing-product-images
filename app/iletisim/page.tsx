@@ -11,7 +11,15 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Phone, Mail, Clock, MessageCircle, Send } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { MapPin, Phone, Mail, Clock, MessageCircle, Send, CheckCircle2 } from "lucide-react"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -23,7 +31,14 @@ export default function ContactPage() {
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+
+  // Zorunlu (kırmızı * ile işaretli) alanların hepsinde en az bir karakter olmalı
+  const isFormValid =
+    formData.name.trim().length > 0 &&
+    formData.email.trim().length > 0 &&
+    formData.subject.trim().length > 0 &&
+    formData.message.trim().length > 0
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -34,25 +49,26 @@ export default function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!isFormValid) return
     setIsSubmitting(true)
 
     // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 1500))
 
-    setSubmitStatus("success")
     setIsSubmitting(false)
+    setShowSuccessDialog(true)
+  }
 
-    // Reset form after success
-    setTimeout(() => {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-      })
-      setSubmitStatus("idle")
-    }, 3000)
+  const handleSuccessClose = () => {
+    setShowSuccessDialog(false)
+    // Mesaj gönderin kısmına girilen verileri temizle
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      subject: "",
+      message: "",
+    })
   }
 
   const contactInfo = [
@@ -103,6 +119,26 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen">
       <Header />
+
+      {/* Başarı Ekranı */}
+      <Dialog open={showSuccessDialog} onOpenChange={(open) => !open && handleSuccessClose()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-green-100 dark:bg-green-950">
+              <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+            </div>
+            <DialogTitle className="text-center">İşlem Başarılı</DialogTitle>
+            <DialogDescription className="text-center">
+              Mesajınız başarıyla gönderildi. En kısa sürede size dönüş yapacağız.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center">
+            <Button onClick={handleSuccessClose} className="w-full sm:w-auto">
+              Tamam
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary via-secondary to-accent py-20">
@@ -209,21 +245,7 @@ export default function ContactPage() {
                     />
                   </div>
 
-                  {submitStatus === "success" && (
-                    <div className="rounded-lg bg-green-50 p-4 text-green-800 dark:bg-green-950 dark:text-green-200">
-                      <p className="font-semibold">Mesajınız başarıyla gönderildi!</p>
-                      <p className="text-sm">En kısa sürede size dönüş yapacağız.</p>
-                    </div>
-                  )}
-
-                  {submitStatus === "error" && (
-                    <div className="rounded-lg bg-destructive/10 p-4 text-destructive">
-                      <p className="font-semibold">Bir hata oluştu!</p>
-                      <p className="text-sm">Lütfen daha sonra tekrar deneyin.</p>
-                    </div>
-                  )}
-
-                  <Button type="submit" size="lg" className="gap-2" disabled={isSubmitting}>
+                  <Button type="submit" size="lg" className="gap-2" disabled={isSubmitting || !isFormValid}>
                     {isSubmitting ? (
                       "Gönderiliyor..."
                     ) : (
