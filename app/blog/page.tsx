@@ -13,6 +13,8 @@ import { Search, Calendar, User, Clock, ArrowRight } from "lucide-react"
 export default function BlogPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("Tümü")
+  const [currentPage, setCurrentPage] = useState(1)
+  const postsPerPage = 6
 
   const categories = ["Tümü", "Balıkçılık İpuçları", "Ürün İncelemeleri", "Teknikler", "Lokasyonlar", "Ekipman Bakımı"]
 
@@ -111,13 +113,32 @@ export default function BlogPage() {
     },
   ]
 
-  const filteredPosts = posts.filter((post) => {
+  // Mevcut yazıları çoklayarak daha fazla blog içeriği oluştur (ürünler sayfasındaki mantık)
+  const allPosts = Array.from({ length: 3 }, (_, batch) =>
+    posts.map((post) => ({
+      ...post,
+      id: post.id + batch * posts.length,
+    })),
+  ).flat()
+
+  const filteredPosts = allPosts.filter((post) => {
     const matchesCategory = selectedCategory === "Tümü" || post.category === selectedCategory
     const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesCategory && matchesSearch
   })
+
+  // Sayfalama (ürünler sayfasındaki mantık)
+  const totalPages = Math.max(1, Math.ceil(filteredPosts.length / postsPerPage))
+  const safePage = Math.min(currentPage, totalPages)
+  const startIndex = (safePage - 1) * postsPerPage
+  const paginatedPosts = filteredPosts.slice(startIndex, startIndex + postsPerPage)
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
 
   return (
     <div className="min-h-screen">
@@ -187,7 +208,10 @@ export default function BlogPage() {
               placeholder="Makale ara..."
               className="pl-10"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+                setCurrentPage(1)
+              }}
             />
           </div>
 
@@ -198,7 +222,10 @@ export default function BlogPage() {
                 key={category}
                 variant={selectedCategory === category ? "default" : "outline"}
                 size="sm"
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => {
+                  setSelectedCategory(category)
+                  setCurrentPage(1)
+                }}
               >
                 {category}
               </Button>
@@ -208,7 +235,7 @@ export default function BlogPage() {
 
         {/* Blog Posts Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredPosts.map((post) => (
+          {paginatedPosts.map((post) => (
             <Link href={`/blog/${post.id}`} key={post.id}>
               <Card className="group h-full overflow-hidden transition-all hover:shadow-lg">
                 <div className="relative h-48 overflow-hidden bg-muted">
@@ -247,15 +274,21 @@ export default function BlogPage() {
         </div>
 
         {/* Pagination */}
-        <div className="mt-12 flex items-center justify-center gap-2">
-          <Button variant="outline" disabled>
-            Önceki
-          </Button>
-          <Button variant="default">1</Button>
-          <Button variant="outline">2</Button>
-          <Button variant="outline">3</Button>
-          <Button variant="outline">Sonraki</Button>
-        </div>
+        {filteredPosts.length > 0 && totalPages > 1 && (
+          <div className="mt-12 flex items-center justify-center gap-2">
+            <Button variant="outline" disabled={safePage === 1} onClick={() => goToPage(safePage - 1)}>
+              Önceki
+            </Button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button key={page} variant={safePage === page ? "default" : "outline"} onClick={() => goToPage(page)}>
+                {page}
+              </Button>
+            ))}
+            <Button variant="outline" disabled={safePage === totalPages} onClick={() => goToPage(safePage + 1)}>
+              Sonraki
+            </Button>
+          </div>
+        )}
 
         {/* Newsletter Subscription */}
         <div className="mt-16">
